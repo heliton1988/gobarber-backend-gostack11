@@ -6,7 +6,8 @@ const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp');
 
 export default {
   // Just for turn path of a file accessible from everywhere
-  directory: tmpFolder,
+  tmpFolder,
+  uploadsFolder: path.resolve(tmpFolder, 'uploads'),
 
   storage: multer.diskStorage({
     destination: tmpFolder,

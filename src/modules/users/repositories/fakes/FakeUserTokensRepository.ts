@@ -4,7 +4,7 @@ import IUserTokensRepository from '../IUserTokensRepository';
 import UserToken from '../../infra/typeorm/entities/UserToken';
 
 class FakeUserTokenRepository implements IUserTokensRepository {
-  private tokens: UserToken[] = [];
+  private userTokens: UserToken[] = [];
 
   public async generate(user_id: string): Promise<UserToken> {
     const userToken = new UserToken();
@@ -17,7 +17,7 @@ class FakeUserTokenRepository implements IUserTokensRepository {
       updated_at: Date.now(),
     });
 
-    this.tokens.push(userToken);
+    this.userTokens.push(userToken);
 
     return userToken;
   }

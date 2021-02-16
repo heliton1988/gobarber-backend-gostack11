@@ -3,7 +3,7 @@ node_modules/
 coverage/
 .env
 ormconfig.json
-
+dist
 # tmp/*
 # !tmp/.gitkeep
 # !tmp/uploads/

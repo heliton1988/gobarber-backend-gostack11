@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 12.x
+
+      # Install the dependencies npm/yarn
+      - name: Install the dependecies
+        run: yarn
+        
+      # Run the build
+      - name: Run build
+        run: yarn build
+      
+      # Copy the code for into of Digital Ocean
+      - name: Copy dist folder to Digital Ocean
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "., !node_modules"
+          target: "~/app/node-deploy"
+          
+      # Execute "yarn" on Digital Ocean, Execute the migrations of TypeORM and Restart server Node.js
+      - name: Run productions scripts on Digital Ocean
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/node-deploy
+            yarn
+            ./node_modules/.bin/typeorm migration:run
+            pm2 restart gobarber-api
+      
+      
